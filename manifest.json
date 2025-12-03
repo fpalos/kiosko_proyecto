@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Kiosko topBar Extension",
+  "version": "1.0.1",
+  "description": "Extensión para navegar entre menú principal, HCM y GCA",
+  "icons": {
+    "128": "kioskoAppLogo.png"
+  },
+  "permissions": [
+    "scripting",
+    "tabs",
+    "webNavigation",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:7001/*",
+    "https://egoi.fa.us2.oraclecloud.com/*",
+    "https://egoi.login.us2.oraclecloud.com/*",
+    "https://gca.paquetexpress.com.mx/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost:7001/*",
+        "https://egoi.fa.us2.oraclecloud.com/*",
+        "https://egoi.login.us2.oraclecloud.com/*",
+        "https://gca.paquetexpress.com.mx/*"
+      ],
+      "js": ["session.js", "content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["index.html"],
+      "matches": [
+        "http://localhost:7001/*",
+        "https://egoi.fa.us2.oraclecloud.com/*",
+        "https://egoi.login.us2.oraclecloud.com/*",
+        "https://gca.paquetexpress.com.mx/*"
+      ]
+    }
+  ]
+}

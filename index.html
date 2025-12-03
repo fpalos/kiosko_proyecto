@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kiosco - Acceso a plataformas de recursos humanos y gestión">
+  <title>Kiosco</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      color: #1e1e1e;
+      overflow: hidden;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        url("data:image/svg+xml,%3Csvg id='Capa_1' data-name='Capa 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 65.6 276.21'%3E%3Cpath fill='%230241e2' d='M64.14,140.98c-11.68-8.85-19.53-25.22-19.53-43.95s7.85-35.1,19.53-43.95V6.14C27.17,23.67,1.46,66.15,1.46,109.96s29.46,118.88,62.68,160.11v-129.09Z'/%3E%3Cpath fill='transparent' d='M64.14,53.08c-11.68,8.85-19.53,25.22-19.53-43.95s7.85-35.1,19.53,43.95V53.08Z'/%3E%3C/svg%3E") no-repeat calc(100% + 10px) center,
+        url("data:image/svg+xml,%3Csvg id='Capa_2' data-name='Capa 2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 65.6 276.21'%3E%3Cg transform='scale(-1,1) translate(-65.6,0)'%3E%3Cpath fill='%230241e2' d='M64.14,140.98c-11.68-8.85-19.53-25.22-19.53-43.95s7.85-35.1,19.53-43.95V6.14C27.17,23.67,1.46,66.15,1.46,109.96s29.46,118.88,62.68,160.11v-129.09Z'/%3E%3Cpath fill='transparent' d='M64.14,53.08c-11.68,8.85-19.53,25.22-19.53,43.95s7.85,35.1,19.53,43.95V53.08Z'/%3E%3C/g%3E%3C/svg%3E") no-repeat calc(0% - 10px) center,
+        linear-gradient(135deg, #ffffff 0%, #ebecef 100%);
+          z-index: -1;
+      
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header {
+      margin-bottom: 50px;
+      color: white;
+      animation: slideDown 0.6s ease-out;
+    }
+
+    .logo {
+      width: 140px;
+      height: auto;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      font-size: 16px;
+      opacity: 0.95;
+      font-weight: 300;
+    }
+
+    .menu {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeIn 0.8s ease-out 0.2s both;
+    }
+
+    .card {
+      background: #DBDBDB;
+      border-radius: 16px;
+      padding: 40px 30px;
+      width: 280px;
+      text-decoration: none;
+      color: #000;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .card:active {
+      transform: translateY(-4px);
+    }
+
+    .card-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .card h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .card ul {
+      list-style: none;
+      text-align: left;
+      align-self: center;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.5fr 1.5fr;
+      gap: 6px;
+    }
+
+    .card li {
+      font-size: 13px;
+      color: #002DC7;
+      margin: 6px 0;
+      padding-left: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .card li img {
+      margin-bottom: 4px;
+    }
+
+    .card li::before {
+      
+      position: absolute;
+      left: 0;
+      color: #667eea;
+      font-weight: bold;
+    }
+
+    .hcm {
+      background: linear-gradient(135deg, #002DC7 0%, #1a47e8 100%);
+      color: white;
+    }
+
+    .hcm h2,
+    .hcm p,
+    .hcm li {
+      color: white;
+    }
+
+
+
+    .ga {
+      background: linear-gradient(135deg, #DBDBDB 0%, #e8e8e8 100%);
+    }
+
+    footer {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      width: 90%;
+      max-width: 600px;
+      margin: 0 auto;
+      animation: slideUp 0.6s ease-out 0.4s both;
+      z-index: 100;
+    }
+
+    .alert {
+      background: rgba(255, 79, 79, 0.9);
+      text-align: center;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(255, 79, 79, 0.3);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .my-svg-image {
+      margin-top: 20px;
+      width: 200px;
+      height: 200px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,10 61,40 92,40 67,60 79,90 50,70 21,90 33,60 8,40 39,40' fill='%23FFD700' stroke='%23FFA500' stroke-width='2'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+    }
+
+    @media (max-width: 768px) {
+      .menu {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .card {
+        width: 100%;
+        max-width: 320px;
+      }
+
+      header h1 {
+        font-size: 24px;
+      }
+
+      header p {
+        font-size: 14px;
+      }
+
+      .container {
+        padding-bottom: 120px;
+      }
+
+      footer {
+        max-width: 600px;
+        margin: 0 auto;
+
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <div class="background"></div>
+
+  <div class="container">
+    <header>      
+      
+      <div >
+        <img src="./assets/recurso9.svg" style="width: 200px; height: 50px;" />
+        <br></br>
+        <h1 style="color: #002DC7;"> Ahora todo al alcance de tu mano</h1>
+
+      </div>
+    </header>
+
+    <main class="menu">
+      <a href="https://egoi.fa.us2.oraclecloud.com/fscmUI/faces/FuseWelcome" class="card hcm" data-platform="hcm">
+        <img src="./assets/hcm_logo_blanco.png" alt="HCM Icon" class="card-icon" style="width:248px; height:128;" />
+  
+        <h4>Aqui podrás consultar y solicitar</h4>
+        <p></p>
+        <ul>
+          <li>
+            <img src="./assets/bonos.png" alt="Bonos Logo" style= vertical-align:middle; margin-right:8px;" />
+            Bonos
+          </li>
+          <li>
+            <img src="./assets/nomina.png" alt="Nomina Logo" style= vertical-align:middle; margin-right:8px;" />
+            Nomina
+          <li>
+            <img src="./assets/permisos.png" alt="Permisos Logo" style=vertical-align:middle; margin-right:8px;" />
+            Permisos
+          </li>
+          <li>
+            <img src="./assets/vacaciones.png" alt="Vacaciones Logo" style=vertical-align:middle; margin-right:8px;" />
+        Vacaciones
+          </li>
+        </ul>
+      </a>
+
+      <a href="https://gca.paquetexpress.com.mx/softexpert/login" class="card ga" data-platform="gca">
+        <img src="./assets/GCA-Icono SVG.svg" alt="GCA-Icono" class="card-icon" style="width:128px; height: 128px;" />
+        
+        
+        <h4 style="color: #002DC7;">Aqui podrás consultar</h4>
+        <p></p>
+        <ul>
+          <li>
+            <img src="./assets/procedimientos.png" alt="Procedimientos Logo" style=vertical-align:middle; margin-right:8px;" />
+            Procedimientos vigentes</li>
+          <li>
+            <img src="./assets/formatos.png" alt="Formatos Logo" style=vertical-align:middle; margin-right:8px;" />
+            Formatos autorizados </li>
+        </ul>
+      </a>
+    </main>
+
+    <footer>
+      <div class="alert">
+        ⚠️ Recuerda cerrar tu sesión después de tus consultas. Tu información es importante y confidencial.
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = card.getAttribute('href');
+        sessionStorage.setItem('cerrar-pestaña-después', 'true');
+        window.location.href = href;
+      });
+    });
+  </script>
+</body>
+</html>
