@@ -20,11 +20,21 @@ function Apply-ChromiumPolicies {
         Write-Host "⚠️  Las políticas no existen. Creando: $chromiumPolicyPath" -ForegroundColor Yellow
 
         try {
-            New-Item -Path "HKCU:\SOFTWARE\Policies" -Name "Chromium" -Force | Out-Null
+            # Verificar y crear directorio padre "Policies" si no existe
+            $policiesPath = "HKLM:\SOFTWARE\Policies"
+            if (-not (Test-Path $policiesPath)) {
+                Write-Host "📁 Creando directorio padre: $policiesPath" -ForegroundColor Yellow
+                New-Item -Path "HKLM:\SOFTWARE" -Name "Policies" -Force | Out-Null
+                Write-Host "✅ Directorio 'Policies' creado correctamente." -ForegroundColor Green
+            }
+            
+            # Crear directorio "Chromium" bajo Policies
+            New-Item -Path $policiesPath -Name "Chromium" -Force | Out-Null
             Write-Host "✅ Carpeta 'Chromium' creada correctamente." -ForegroundColor Green
         }
         catch {
             Write-Host "❌ Error al crear políticas. Ejecuta PowerShell como Administrador." -ForegroundColor Red
+            Write-Host "   Error específico: $($_.Exception.Message)" -ForegroundColor Red
             exit 1
         }
     }
