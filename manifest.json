@@ -32,7 +32,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["index.html"],
+      "resources": ["index.html", "script.js"],
       "matches": [
         "http://localhost:7001/*",
         "https://egoi.fa.us2.oraclecloud.com/*",

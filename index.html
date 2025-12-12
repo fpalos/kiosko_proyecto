@@ -298,7 +298,7 @@
       <a href="https://egoi.fa.us2.oraclecloud.com/fscmUI/faces/FuseWelcome" class="card hcm" data-platform="hcm">
         <img src="./assets/hcm_logo_blanco.png" alt="HCM Icon" class="card-icon" style="width:248px; height:128;" />
   
-        <h4>Aqui podrás consultar y solicitar</h4>
+        <h4>Aquí podrás consultar y solicitar</h4>
         <p></p>
         <ul>
           <li>
@@ -323,7 +323,7 @@
         <img src="./assets/GCA-Icono SVG.svg" alt="GCA-Icono" class="card-icon" style="width:128px; height: 128px;" />
         
         
-        <h4 style="color: #002DC7;">Aqui podrás consultar</h4>
+        <h4 style="color: #002DC7;">Aquí podrás consultar</h4>
         <p></p>
         <ul>
           <li>
@@ -343,15 +343,6 @@
     </footer>
   </div>
 
-  <script>
-    document.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        e.preventDefault();
-        const href = card.getAttribute('href');
-        sessionStorage.setItem('cerrar-pestaña-después', 'true');
-        window.location.href = href;
-      });
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
