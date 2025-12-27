@@ -180,10 +180,13 @@ function Test-ExtensionExists {
     Write-ColorLog "Verificando si la extensión existe localmente..." "ACTION"
     
     $manifestPath = "$EXTENSION_DIR\manifest.json"
-    $contentPath = "$EXTENSION_DIR\content.js"
+    # content.js may be at root or inside js\ folder depending on project structure
+    $possibleContentPaths = @("$EXTENSION_DIR\content.js", "$EXTENSION_DIR\js\content.js")
+    $contentPath = $possibleContentPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if (-not $contentPath) { $contentPath = "$EXTENSION_DIR\js\content.js" } # fallback display path
     $logoPath = "$EXTENSION_DIR\kioskoAppLogo.png"
     $indexPath = "$EXTENSION_DIR\index.html"
-    
+
     $manifestExists = Test-Path $manifestPath
     $contentExists = Test-Path $contentPath
     $logoExists = Test-Path $logoPath
@@ -277,11 +280,41 @@ function Download-LatestFromGitHub {
 # ============================================================
 
 function Get-LocalVersion {
+    # 1) Prefer explicit version.txt in the extension folder
     if (Test-Path $versionFile) {
-        return Get-Content $versionFile
-    } else {
-        return "none"
+        try {
+            $v = (Get-Content $versionFile -ErrorAction Stop) -join "" | ForEach-Object { $_.Trim() }
+            if ($v -and $v -ne "") {
+                Write-ColorLog "📍 Versión local (source: version.txt): $v" "INFO"
+                return $v
+            }
+        }
+        catch {
+            Write-ColorLog "⚠️  No se pudo leer version.txt: $($_.Exception.Message)" "WARNING"
+        }
     }
+
+    # 2) Fallback: try to read version from manifest.json (extension root or repo root)
+    $manifestCandidates = @("$EXTENSION_DIR\manifest.json", (Join-Path $PSScriptRoot "..\manifest.json"))
+    foreach ($mPath in $manifestCandidates) {
+        if (Test-Path $mPath) {
+            try {
+                $manifest = Get-Content $mPath -Raw | ConvertFrom-Json
+                if ($manifest.version) {
+                    $mv = $manifest.version.Trim()
+                    Write-ColorLog "📍 Versión local (source: manifest.json at $mPath): $mv" "INFO"
+                    return $mv
+                }
+            }
+            catch {
+                Write-ColorLog "⚠️  Error leyendo manifest.json at $mPath: $($_.Exception.Message)" "WARNING"
+            }
+        }
+    }
+
+    # 3) Nothing found
+    Write-ColorLog "📍 No se encontró version.txt ni manifest.json con versión válida. Usando 'none'" "INFO"
+    return "none"
 }
 
 function Test-UpdateNeeded {
@@ -531,7 +564,9 @@ function Deploy-KioskExtension {
         Write-ColorLog "🔍 Verificando archivos de la extensión..." "INFO"
         
         $manifestPath = "$EXTENSION_DIR\manifest.json"
-        $contentPath = "$EXTENSION_DIR\content.js"
+        $possibleContentPaths = @("$EXTENSION_DIR\content.js", "$EXTENSION_DIR\js\content.js")
+        $contentPath = $possibleContentPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+        if (-not $contentPath) { $contentPath = "$EXTENSION_DIR\js\content.js" } # fallback for messages
         $logoPath = "$EXTENSION_DIR\kioskoAppLogo.png"
         $indexPath = "$EXTENSION_DIR\index.html"
         
@@ -693,10 +728,12 @@ function Main {
     
     # Verificar solo los 4 archivos esenciales
     $manifestPath = "$EXTENSION_DIR\manifest.json"
-    $contentPath = "$EXTENSION_DIR\content.js"
+    $possibleContentPaths = @("$EXTENSION_DIR\content.js", "$EXTENSION_DIR\js\content.js")
+    $contentPath = $possibleContentPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if (-not $contentPath) { $contentPath = "$EXTENSION_DIR\js\content.js" } # fallback for messages
     $logoPath = "$EXTENSION_DIR\kioskoAppLogo.png"
     $indexPath = "$EXTENSION_DIR\index.html"
-    
+
     $manifestExists = Test-Path $manifestPath
     $contentExists = Test-Path $contentPath
     $logoExists = Test-Path $logoPath
