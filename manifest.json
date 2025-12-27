@@ -26,13 +26,27 @@
         "https://egoi.login.us2.oraclecloud.com/*",
         "https://gca.paquetexpress.com.mx/*"
       ],
-      "js": ["session.js", "content.js"],
+      "js": [
+        "js/config/app.config.js",
+        "js/core/EventBus.js",
+        "js/utils/logger.js",
+        "js/utils/helpers.js",
+        "js/services/PlatformService.js",
+        "js/services/NavigationService.js",
+        "js/ui/Modal.js",
+        "js/ui/TopBar.js",
+        "js/core/SessionManager.js",
+        "js/content.js"
+      ],
       "run_at": "document_start"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["index.html", "script.js"],
+      "resources": [
+        "index.html",
+        "index.js"
+      ],
       "matches": [
         "http://localhost:7001/*",
         "https://egoi.fa.us2.oraclecloud.com/*",
