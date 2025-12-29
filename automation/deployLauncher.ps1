@@ -307,7 +307,7 @@ function Get-LocalVersion {
                 }
             }
             catch {
-                Write-ColorLog "⚠️  Error leyendo manifest.json at $mPath: $($_.Exception.Message)" "WARNING"
+                Write-ColorLog "⚠️  Error leyendo manifest.json at ${mPath}: $($_.Exception.Message)" "WARNING"
             }
         }
     }
