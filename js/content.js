@@ -45,6 +45,9 @@ function inicializar() {
   // TopBar necesita navigationService
   const topBar = new TopBar(platformService, eventBus);
   topBar.navigationService = navigationService;
+
+  // SessionManager necesita navigationService para logout correcto
+  sessionManager.navigationService = navigationService;
   
   // ============================================
   // 3. INICIALIZAR SESSION MANAGER

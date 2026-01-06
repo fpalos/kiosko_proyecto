@@ -149,6 +149,14 @@ class NavigationService {
       
       this.goToHome();
     }
+
+    // Manejar redirección desde SessionManager después de logout
+    if (sessionStorage.getItem('redirect-after-logout') === 'true') {
+      Logger.log('Detectado: redirigiendo después de logout (SessionManager)');
+      sessionStorage.removeItem('redirect-after-logout');
+      
+      this.goToHome();
+    }
   }
 
   /**

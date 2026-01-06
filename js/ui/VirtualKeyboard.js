@@ -499,7 +499,6 @@ class VirtualKeyboard {
     
     return key;
   }
-  }
 
   /**
    * Insertar texto en el campo activo usando execCommand o fallback manual

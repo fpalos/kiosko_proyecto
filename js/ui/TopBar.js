@@ -70,7 +70,7 @@ class TopBar {
           /* ===== Home button ===== */
           --home-size: 65px;
           --home-offset: -1px;
-          --home-bg: #4fa3ff;
+          --home-bg: #32383f;
 
           /* ===== Icon sizes ===== */
           --icon-nav-size: 22px;
