@@ -6,7 +6,7 @@
 const AppConfig = {
   // Configuración de sesión
   SESSION: {
-    TIMEOUT_MINUTES: 3,           // Tiempo total antes de logout
+    TIMEOUT_MINUTES: 1,           // Tiempo total antes de logout
     WARNING_SECONDS: 30,           // Segundos para mostrar warning
     ACTIVITY_EVENTS: [             // Eventos que resetean el timeout
       'mousedown',

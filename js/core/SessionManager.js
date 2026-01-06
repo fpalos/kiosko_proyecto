@@ -12,6 +12,7 @@ class SessionManager {
     });
     
     this.eventBus = eventBus || (typeof window.eventBus !== 'undefined' ? window.eventBus : null);
+    this.navigationService = null; // Se establece después desde content.js
     
     this.inactivityTime = this.config.TIMEOUT_MINUTES * 60 * 1000;
     this.warningTime = this.config.WARNING_SECONDS * 1000;
@@ -276,41 +277,46 @@ class SessionManager {
   endSessionDueToInactivity() {
     Logger.logSession('🚪 Sesión cerrada por inactividad');
     
+    this.hideInactivityWarning();
+    
     sessionStorage.removeItem('session-started');
     sessionStorage.removeItem('session-start-time');
     this.sessionActive = false;
-    
-    this.showSessionExpiredMessage();
     
     if (this.eventBus) {
       this.eventBus.emit(EVENTS.SESSION_INACTIVITY_TIMEOUT, {
         timestamp: new Date()
       });
     }
+
+    // Mostrar mensaje y luego hacer logout + redirect
+    this.showSessionExpiredMessage();
   }
 
   /**
    * Terminar sesión (logout manual)
    */
   endSession() {
-    Logger.logSession('👋 Sesión terminada');
+    Logger.logSession('👋 Sesión terminada (logout manual)');
     
-    const platform = platformService.getCurrentPlatform();
+    this.hideInactivityWarning();
     
     sessionStorage.removeItem('session-started');
     sessionStorage.removeItem('session-start-time');
     this.sessionActive = false;
 
-    if (platform) {
-      const logoutUrl = platformService.getLogoutUrl();
-      window.location.href = logoutUrl;
-    }
-    
     if (this.eventBus) {
       this.eventBus.emit(EVENTS.SESSION_END, {
         timestamp: new Date(),
-        platform: platform ? platform.name : 'unknown'
+        manual: true
       });
+    }
+
+    // Usar NavigationService si está disponible, sino usar lógica de logout manual
+    if (this.navigationService) {
+      this.navigationService.handleGoHome();
+    } else {
+      this._fallbackLogoutAndRedirect();
     }
   }
 
@@ -370,12 +376,57 @@ class SessionManager {
     
     document.body.appendChild(container);
 
-    // Redirigir después de 2 segundos
+    // Hacer logout y redirigir después de 2 segundos
     setTimeout(() => {
-      const extensionId = chrome.runtime.id;
-      const menuUrl = `chrome-extension://${extensionId}/index.html`;
-      window.location.href = menuUrl;
+      if (this.navigationService) {
+        this.navigationService.handleGoHome();
+      } else {
+        this._fallbackLogoutAndRedirect();
+      }
     }, 2000);
+  }
+
+  /**
+   * Fallback para logout y redirect cuando NavigationService no está disponible
+   * @private
+   */
+  _fallbackLogoutAndRedirect() {
+    const currentUrl = window.location.href;
+    const platform = platformService.detectPlatform(currentUrl);
+
+    if (!platform) {
+      // No hay plataforma, ir directo a index
+      this._redirectToIndex();
+      return;
+    }
+
+    // Verificar si ya estamos en login/logout
+    if (currentUrl.includes('login') || currentUrl.includes('logoutConsent')) {
+      this._redirectToIndex();
+      return;
+    }
+
+    // Hacer logout primero
+    const logoutUrl = platformService.getLogoutUrl();
+    if (logoutUrl) {
+      Logger.logSession('Redirigiendo a logout URL:', logoutUrl);
+      // Marcar para redireccionar después del logout
+      sessionStorage.setItem('redirect-after-logout', 'true');
+      window.location.href = logoutUrl;
+    } else {
+      this._redirectToIndex();
+    }
+  }
+
+  /**
+   * Redirigir a index.html
+   * @private
+   */
+  _redirectToIndex() {
+    const extensionId = chrome.runtime.id;
+    const menuUrl = `chrome-extension://${extensionId}/index.html`;
+    Logger.logSession('Redirigiendo a index.html:', menuUrl);
+    window.location.href = menuUrl;
   }
 
   /**
