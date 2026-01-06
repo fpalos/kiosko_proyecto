@@ -1,12 +1,13 @@
 /**
- * TopBar - Componente de barra superior navegable
+ * TopBar - Componente de barra superior rediseñado (Crystal Design)
  * Aparece en HCM y GCA, proporciona acceso rápido a funciones
+ * Basado en diseño moderno con botones laterales y home circular
  */
 
 class TopBar {
   constructor(platformService, eventBus = null) {
     this.platformService = platformService;
-    this.eventBus = eventBus || window.eventBus;
+    this.eventBus = eventBus || (typeof window.eventBus !== 'undefined' ? window.eventBus : null);
     this.navigationService = null; // Se setea después en content.js
     this.isVisible = false;
     
@@ -37,14 +38,14 @@ class TopBar {
    * @private
    */
   create() {
-    const topBar = document.createElement('div');
+    const topBar = document.createElement('header');
     topBar.id = 'ext-top-bar';
     topBar.innerHTML = this.getHTML();
     
-    document.body.appendChild(topBar);
+    document.body.insertBefore(topBar, document.body.firstChild);
     
     // Ajustar padding del body
-    document.body.style.paddingTop = AppConfig.UI.TOP_BAR_HEIGHT;
+    document.body.style.paddingTop = '60px';
   }
 
   /**
@@ -55,60 +56,128 @@ class TopBar {
   getHTML() {
     return `
       <style>
+        :root {
+          /* ===== Layout ===== */
+          --bar-height: 60px;
+          --bar-bg: #1d1d1f;
+
+          /* ===== Buttons ===== */
+          --btn-bg: #32383f;
+          --btn-hover: #4fa3ff;
+          --text: #ffffff;
+          --side-btn-offset: -4px;
+
+          /* ===== Home button ===== */
+          --home-size: 65px;
+          --home-offset: -1px;
+          --home-bg: #4fa3ff;
+
+          /* ===== Icon sizes ===== */
+          --icon-nav-size: 22px;
+          --icon-home-size: 38px;
+        }
+
         #ext-top-bar {
           position: fixed;
           top: 0;
           left: 0;
           right: 0;
-          height: ${AppConfig.UI.TOP_BAR_HEIGHT};
-          background: ${AppConfig.UI.GRADIENTS.PURPLE};
-          display: flex;
+          height: var(--bar-height);
+          background: var(--bar-bg);
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
           align-items: center;
-          justify-content: space-between;
-          padding: 0 20px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          z-index: ${AppConfig.UI.TOP_BAR_Z_INDEX};
-          font-family: ${AppConfig.UI.FONTS.FAMILY};
+          padding: 0 18px;
+          z-index: 10000;
+          font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
-        #ext-top-bar .left-section {
-          display: flex;
-          gap: 10px;
+        /* Navigation Buttons */
+        .top-bar-nav-btn {
+          display: inline-flex;
           align-items: center;
-        }
-
-        #ext-top-bar button {
-          background: rgba(255, 255, 255, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          color: white;
-          padding: 8px 16px;
-          border-radius: 6px;
+          gap: 12px;
+          background: var(--btn-bg);
+          color: var(--text);
+          border: none;
+          border-radius: 10px;
+          padding: 12px 22px;
+          font-size: 16px;
           cursor: pointer;
-          font-size: ${AppConfig.UI.FONTS.SIZE_BASE};
+          transition: background 0.2s ease, transform 0.1s ease;
+          transform: translateY(var(--side-btn-offset));
           font-weight: 500;
-          transition: all 0.3s ease;
-          backdrop-filter: blur(10px);
-          font-family: ${AppConfig.UI.FONTS.FAMILY};
         }
 
-        #ext-top-bar button:hover {
-          background: rgba(255, 255, 255, 0.3);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        .top-bar-nav-btn:hover {
+          background: var(--btn-hover);
         }
 
-        #ext-top-bar button:active {
-          transform: translateY(0);
+        .top-bar-nav-btn:active {
+          transform: scale(0.96);
         }
 
-        #ext-top-bar .logo-text {
-          color: white;
-          font-size: ${AppConfig.UI.FONTS.SIZE_LARGE};
-          font-weight: 600;
-          margin-right: 20px;
+        .top-bar-left {
+          justify-self: start;
         }
 
-        #faq-modal {
+        .top-bar-right {
+          justify-self: end;
+        }
+
+        /* SVG icons */
+        .top-bar-nav-icon {
+          width: var(--icon-nav-size);
+          height: var(--icon-nav-size);
+          flex-shrink: 0;
+        }
+
+        /* Home Button */
+        .top-bar-home-wrapper {
+          height: 100%;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+        }
+
+        .top-bar-home-btn {
+          width: var(--home-size);
+          height: var(--home-size);
+          border-radius: 50%;
+          background: var(--home-bg);
+          color: #fff;
+          border: none;
+          cursor: pointer;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          position: relative;
+          bottom: var(--home-offset);
+
+          transition: transform 0.15s ease, filter 0.2s ease;
+          box-shadow: 0 4px 15px rgba(79, 163, 255, 0.3);
+        }
+
+        .top-bar-home-btn:hover {
+          filter: brightness(1.1);
+          box-shadow: 0 6px 20px rgba(79, 163, 255, 0.4);
+        }
+
+        .top-bar-home-btn:active {
+          transform: scale(0.95);
+        }
+
+        /* Home SVG icon */
+        .top-bar-home-icon {
+          width: var(--icon-home-size);
+          height: var(--icon-home-size);
+        }
+
+        /* FAQ Modal */
+        #faq-modal-topbar {
           display: none;
           position: fixed;
           top: 0;
@@ -116,16 +185,16 @@ class TopBar {
           right: 0;
           bottom: 0;
           background: rgba(0, 0, 0, 0.7);
-          z-index: ${AppConfig.UI.MODAL_Z_INDEX};
+          z-index: 10001;
           align-items: center;
           justify-content: center;
         }
 
-        #faq-modal.active {
+        #faq-modal-topbar.active {
           display: flex;
         }
 
-        #faq-content {
+        #faq-content-topbar {
           background: white;
           border-radius: 12px;
           max-width: 600px;
@@ -133,11 +202,22 @@ class TopBar {
           max-height: 80vh;
           overflow-y: auto;
           box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-          font-family: ${AppConfig.UI.FONTS.FAMILY};
+          animation: slideInModal 0.3s ease-out;
         }
 
-        #faq-content .header {
-          background: ${AppConfig.UI.GRADIENTS.PURPLE};
+        @keyframes slideInModal {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        #faq-content-topbar .header {
+          background: linear-gradient(135deg, #4fa3ff 0%, #2563eb 100%);
           color: white;
           padding: 20px;
           border-radius: 12px 12px 0 0;
@@ -146,7 +226,7 @@ class TopBar {
           align-items: center;
         }
 
-        #faq-content .close-btn {
+        #faq-content-topbar .close-btn {
           background: rgba(255, 255, 255, 0.2);
           border: none;
           color: white;
@@ -162,21 +242,21 @@ class TopBar {
           padding: 0;
         }
 
-        #faq-content .close-btn:hover {
+        #faq-content-topbar .close-btn:hover {
           background: rgba(255, 255, 255, 0.3);
         }
 
-        #faq-content .body {
+        #faq-content-topbar .body {
           padding: 30px;
         }
 
-        .faq-item {
+        .faq-item-topbar {
           margin-bottom: 20px;
         }
 
-        .faq-item .question {
+        .faq-item-topbar .question {
           font-weight: 600;
-          color: ${AppConfig.UI.COLORS.TEXT_DARK};
+          color: #333;
           margin-bottom: 8px;
           cursor: pointer;
           display: flex;
@@ -184,38 +264,97 @@ class TopBar {
           user-select: none;
         }
 
-        .faq-item .question::before {
+        .faq-item-topbar .question::before {
           content: '▶';
           margin-right: 10px;
           transition: transform 0.3s;
           font-size: 12px;
         }
 
-        .faq-item.open .question::before {
+        .faq-item-topbar.open .question::before {
           transform: rotate(90deg);
         }
 
-        .faq-item .answer {
+        .faq-item-topbar .answer {
           display: none;
-          color: ${AppConfig.UI.COLORS.TEXT_LIGHT};
-          font-size: ${AppConfig.UI.FONTS.SIZE_SMALL};
+          color: #666;
+          font-size: 14px;
           line-height: 1.6;
           margin-left: 20px;
           padding: 10px;
-          background: ${AppConfig.UI.COLORS.BACKGROUND};
+          background: #f5f5f5;
           border-radius: 6px;
         }
 
-        .faq-item.open .answer {
+        .faq-item-topbar.open .answer {
           display: block;
         }
       </style>
 
-      <div class="left-section">
-        <div class="logo-text">📋 Navegador</div>
-        <button id="btn-inicio">${AppConfig.MESSAGES.NAV_HOME}</button>
-        <button id="btn-cerrar">${AppConfig.MESSAGES.NAV_LOGOUT}</button>
-        <button id="btn-faq">${AppConfig.MESSAGES.NAV_FAQ}</button>
+      <!-- Top Bar -->
+      <div class="top-bar-left">
+        <button class="top-bar-nav-btn" id="btn-regresar">
+          <svg class="top-bar-nav-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"/>
+          </svg>
+          Regresar
+        </button>
+      </div>
+
+      <!-- Home Button (Center) -->
+      <div class="top-bar-home-wrapper">
+        <button class="top-bar-home-btn" id="btn-inicio" aria-label="Inicio">
+          <svg class="top-bar-home-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Info Button (Right) -->
+      <div class="top-bar-right">
+        <button class="top-bar-nav-btn" id="btn-informacion">
+          <svg class="top-bar-nav-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+          </svg>
+          Información
+        </button>
+      </div>
+
+      <!-- FAQ Modal -->
+      <div id="faq-modal-topbar">
+        <div id="faq-content-topbar">
+          <div class="header">
+            <h2>Información y Ayuda</h2>
+            <button class="close-btn">&times;</button>
+          </div>
+          <div class="body">
+            <div class="faq-item-topbar">
+              <div class="question">¿Cómo accedo a HCM?</div>
+              <div class="answer">HCM es el sistema de Gestión de Capital Humano. Puedes acceder desde el menú principal haciendo click en la tarjeta de HCM. Necesitarás tus credenciales de usuario.</div>
+            </div>
+            <div class="faq-item-topbar">
+              <div class="question">¿Cómo uso GCA?</div>
+              <div class="answer">GCA es el Sistema de Gestión de Calidad. Accede desde el menú principal. Aquí puedes consultar procedimientos y formatos autorizados.</div>
+            </div>
+            <div class="faq-item-topbar">
+              <div class="question">¿Cómo regreso al menú principal?</div>
+              <div class="answer">Haz click en el botón circular azul de "Inicio" en el centro de la barra superior. Serás redirigido al menú principal donde puedes elegir otra plataforma.</div>
+            </div>
+            <div class="faq-item-topbar">
+              <div class="question">¿Qué hago si olvido mi contraseña?</div>
+              <div class="answer">Cada plataforma tiene su propio sistema de recuperación de contraseña. Busca el enlace "¿Olvidaste tu contraseña?" en la pantalla de login.</div>
+            </div>
+            <div class="faq-item-topbar">
+              <div class="question">¿Mi sesión se cierra automáticamente?</div>
+              <div class="answer">Sí, por seguridad tu sesión se cierra automáticamente después de 3 minutos de inactividad. Recibirás una advertencia 30 segundos antes.</div>
+            </div>
+            <div class="faq-item-topbar">
+              <div class="question">¿Dónde está el botón de cerrar sesión?</div>
+              <div class="answer">Para cerrar sesión de forma segura, haz click en el botón "Regresar" a la izquierda. Esto te llevará al menú principal donde tu sesión terminará automáticamente.</div>
+            </div>
+          </div>
+        </div>
       </div>
     `;
   }
@@ -225,9 +364,16 @@ class TopBar {
    * @private
    */
   attachEventListeners() {
+    const btnRegresar = document.getElementById('btn-regresar');
     const btnInicio = document.getElementById('btn-inicio');
-    const btnCerrar = document.getElementById('btn-cerrar');
-    const btnFaq = document.getElementById('btn-faq');
+    const btnInformacion = document.getElementById('btn-informacion');
+
+    if (btnRegresar) {
+      btnRegresar.addEventListener('click', () => {
+        Logger.logUI('Click en Regresar');
+        this.navigationService?.handleGoHome();
+      });
+    }
 
     if (btnInicio) {
       btnInicio.addEventListener('click', () => {
@@ -236,85 +382,39 @@ class TopBar {
       });
     }
 
-    if (btnCerrar) {
-      btnCerrar.addEventListener('click', () => {
-        Logger.logUI('Click en Cerrar Sesión');
-        this.navigationService?.handleLogout();
+    if (btnInformacion) {
+      btnInformacion.addEventListener('click', () => {
+        Logger.logUI('Click en Información');
+        this.openInformacionModal();
       });
     }
 
-    if (btnFaq) {
-      btnFaq.addEventListener('click', () => {
-        Logger.logUI('Click en FAQ');
-        this.openFAQModal();
-      });
-    }
-
-    this.setupFAQModal();
+    this.setupInformacionModal();
   }
 
   /**
-   * Setup del modal FAQ
+   * Setup del modal de Información
    * @private
    */
-  setupFAQModal() {
-    const faqModal = document.createElement('div');
-    faqModal.id = 'faq-modal';
-    faqModal.innerHTML = `
-      <div id="faq-content">
-        <div class="header">
-          <h2>Preguntas Frecuentes</h2>
-          <button class="close-btn">&times;</button>
-        </div>
-        <div class="body">
-          <div class="faq-item">
-            <div class="question">¿Cómo accedo a HCM?</div>
-            <div class="answer">HCM es el sistema de Gestión de Capital Humano. Puedes acceder desde el menú principal haciendo click en la tarjeta de HCM. Necesitarás tus credenciales de usuario.</div>
-          </div>
-          <div class="faq-item">
-            <div class="question">¿Cómo uso GCA?</div>
-            <div class="answer">GCA es el Sistema de Gestión de Calidad. Accede desde el menú principal. Aquí puedes consultar procedimientos y formatos autorizados.</div>
-          </div>
-          <div class="faq-item">
-            <div class="question">¿Cómo cierro mi sesión?</div>
-            <div class="answer">Haz click en el botón "Cerrar Sesión" en la barra superior (🔒). También puedes usar el botón en el menú principal. Siempre cierra sesión después de tus consultas.</div>
-          </div>
-          <div class="faq-item">
-            <div class="question">¿Qué hago si olvido mi contraseña?</div>
-            <div class="answer">Cada plataforma tiene su propio sistema de recuperación de contraseña. Busca el enlace "¿Olvidaste tu contraseña?" en la pantalla de login.</div>
-          </div>
-          <div class="faq-item">
-            <div class="question">¿Cómo navego entre plataformas?</div>
-            <div class="answer">Usa el botón "Inicio" (🏠) en la barra superior para volver al menú principal. Desde allí puedes acceder a cualquier plataforma.</div>
-          </div>
-          <div class="faq-item">
-            <div class="question">¿Mi sesión se cierra automáticamente?</div>
-            <div class="answer">Sí, por seguridad tu sesión se cierra automáticamente después de 3 minutos de inactividad. Recibirás una advertencia 30 segundos antes.</div>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(faqModal);
-
-    // Event listeners del FAQ
-    const closeBtn = document.querySelector('#faq-content .close-btn');
+  setupInformacionModal() {
+    const closeBtn = document.querySelector('#faq-content-topbar .close-btn');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
-        this.closeFAQModal();
+        this.closeInformacionModal();
       });
     }
 
-    const modalElement = document.getElementById('faq-modal');
+    const modalElement = document.getElementById('faq-modal-topbar');
     if (modalElement) {
       modalElement.addEventListener('click', (e) => {
-        if (e.target.id === 'faq-modal') {
-          this.closeFAQModal();
+        if (e.target.id === 'faq-modal-topbar') {
+          this.closeInformacionModal();
         }
       });
     }
 
     // FAQ items toggle
-    document.querySelectorAll('.faq-item .question').forEach(question => {
+    document.querySelectorAll('.faq-item-topbar .question').forEach(question => {
       question.addEventListener('click', function() {
         this.parentElement.classList.toggle('open');
       });
@@ -322,24 +422,24 @@ class TopBar {
   }
 
   /**
-   * Abrir modal FAQ
+   * Abrir modal de Información
    */
-  openFAQModal() {
-    Logger.logUI('Abriendo modal FAQ');
-    document.getElementById('faq-modal').classList.add('active');
+  openInformacionModal() {
+    Logger.logUI('Abriendo modal Información');
+    document.getElementById('faq-modal-topbar').classList.add('active');
     if (this.eventBus) {
-      this.eventBus.emit(EVENTS.MODAL_OPEN, { type: 'faq' });
+      this.eventBus.emit(EVENTS.MODAL_OPEN, { type: 'informacion' });
     }
   }
 
   /**
-   * Cerrar modal FAQ
+   * Cerrar modal de Información
    */
-  closeFAQModal() {
-    Logger.logUI('Cerrando modal FAQ');
-    document.getElementById('faq-modal').classList.remove('active');
+  closeInformacionModal() {
+    Logger.logUI('Cerrando modal Información');
+    document.getElementById('faq-modal-topbar').classList.remove('active');
     if (this.eventBus) {
-      this.eventBus.emit(EVENTS.MODAL_CLOSE, { type: 'faq' });
+      this.eventBus.emit(EVENTS.MODAL_CLOSE, { type: 'informacion' });
     }
   }
 
@@ -349,9 +449,11 @@ class TopBar {
   show() {
     const topBar = document.getElementById('ext-top-bar');
     if (topBar) {
-      topBar.style.display = 'flex';
+      topBar.style.display = 'grid';
       this.isVisible = true;
-      this.eventBus.emit(EVENTS.TOPBAR_SHOW);
+      if (this.eventBus) {
+        this.eventBus.emit(EVENTS.TOPBAR_SHOW);
+      }
     }
   }
 
@@ -363,7 +465,20 @@ class TopBar {
     if (topBar) {
       topBar.style.display = 'none';
       this.isVisible = false;
-      this.eventBus.emit(EVENTS.TOPBAR_HIDE);
+      if (this.eventBus) {
+        this.eventBus.emit(EVENTS.TOPBAR_HIDE);
+      }
+    }
+  }
+
+  /**
+   * Toggle visibilidad
+   */
+  toggle() {
+    if (this.isVisible) {
+      this.hide();
+    } else {
+      this.show();
     }
   }
 
