@@ -35,6 +35,7 @@
         "js/services/NavigationService.js",
         "js/ui/Modal.js",
         "js/ui/TopBar.js",
+        "js/ui/VirtualKeyboard.js",
         "js/core/SessionManager.js",
         "js/content.js"
       ],
