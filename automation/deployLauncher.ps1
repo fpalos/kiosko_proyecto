@@ -612,6 +612,7 @@ function Deploy-KioskExtension {
         # Configurar argumentos para Chrome
         $arguments = @(
             "--kiosk",                    # Fuerza pantalla completa real
+            "--force-device-scale-factor=1", # Fuerza zoom al 100%
             "--no-first-run",            # Evita pantallas de bienvenida
             "--no-default-browser-check", # Evita preguntar si es el navegador por defecto
             "--disable-infobars",        # Deshabilita barras de información

@@ -85,7 +85,7 @@ class TopBar {
           height: var(--bar-height);
           background: var(--bar-bg);
           display: grid;
-          grid-template-columns: 1fr auto 1fr;
+          grid-template-columns: 1fr 1fr;
           align-items: center;
           padding: 0 18px;
           z-index: 10000;
@@ -118,10 +118,6 @@ class TopBar {
           transform: scale(0.96);
         }
 
-        .top-bar-left {
-          justify-self: start;
-        }
-
         .top-bar-right {
           justify-self: end;
         }
@@ -138,7 +134,8 @@ class TopBar {
           height: 100%;
           display: flex;
           align-items: flex-end;
-          justify-content: center;
+          justify-content: flex-start;
+          padding-left: 20px;
         }
 
         .top-bar-home-btn {
@@ -292,16 +289,7 @@ class TopBar {
       </style>
 
       <!-- Top Bar -->
-      <div class="top-bar-left">
-        <button class="top-bar-nav-btn" id="btn-regresar">
-          <svg class="top-bar-nav-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"/>
-          </svg>
-          Regresar
-        </button>
-      </div>
-
-      <!-- Home Button (Center) -->
+      <!-- Home Button (Left) -->
       <div class="top-bar-home-wrapper">
         <button class="top-bar-home-btn" id="btn-inicio" aria-label="Inicio">
           <svg class="top-bar-home-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
@@ -364,16 +352,8 @@ class TopBar {
    * @private
    */
   attachEventListeners() {
-    const btnRegresar = document.getElementById('btn-regresar');
     const btnInicio = document.getElementById('btn-inicio');
     const btnInformacion = document.getElementById('btn-informacion');
-
-    if (btnRegresar) {
-      btnRegresar.addEventListener('click', () => {
-        Logger.logUI('Click en Regresar');
-        this.navigationService?.handleGoHome();
-      });
-    }
 
     if (btnInicio) {
       btnInicio.addEventListener('click', () => {
