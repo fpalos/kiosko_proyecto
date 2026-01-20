@@ -129,48 +129,46 @@ class TopBar {
           flex-shrink: 0;
         }
 
-        /* Home Button */
+        /* Home Button (rectangular like Info) */
         .top-bar-home-wrapper {
           height: 100%;
           display: flex;
-          align-items: flex-end;
+          align-items: center;
           justify-content: flex-start;
-          padding-left: 20px;
+          padding-left: 0;
         }
 
         .top-bar-home-btn {
-          width: var(--home-size);
-          height: var(--home-size);
-          border-radius: 50%;
-          background: var(--home-bg);
-          color: #fff;
-          border: none;
-          cursor: pointer;
-
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          justify-content: center;
-
-          position: relative;
-          bottom: var(--home-offset);
-
-          transition: transform 0.15s ease, filter 0.2s ease;
-          box-shadow: 0 4px 15px rgba(79, 163, 255, 0.3);
+          gap: 12px;
+          background: var(--btn-bg);
+          color: var(--text);
+          border: none;
+          border-radius: 10px;
+          padding: 12px 22px;
+          font-size: 16px;
+          cursor: pointer;
+          transition: background 0.2s ease, transform 0.1s ease;
+          transform: translateY(var(--side-btn-offset));
+          font-weight: 500;
+          justify-content: flex-start;
+          box-shadow: none;
         }
 
         .top-bar-home-btn:hover {
-          filter: brightness(1.1);
-          box-shadow: 0 6px 20px rgba(79, 163, 255, 0.4);
+          background: var(--btn-hover);
         }
 
         .top-bar-home-btn:active {
-          transform: scale(0.95);
+          transform: scale(0.96);
         }
 
         /* Home SVG icon */
         .top-bar-home-icon {
-          width: var(--icon-home-size);
-          height: var(--icon-home-size);
+          width: var(--icon-nav-size);
+          height: var(--icon-nav-size);
+          flex-shrink: 0;
         }
 
         /* FAQ Modal */
@@ -259,6 +257,21 @@ class TopBar {
           display: flex;
           align-items: center;
           user-select: none;
+          background: rgba(79, 163, 255, 0.1);
+          padding: 14px 18px;
+          border-radius: 8px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .faq-item-topbar .question:hover {
+          background: rgba(79, 163, 255, 0.2);
+          transform: translateY(-2px);
+          box-shadow: 0 2px 8px rgba(79, 163, 255, 0.2);
+        }
+
+        .faq-item-topbar .question:active {
+          transform: translateY(0);
+          background: rgba(79, 163, 255, 0.15);
         }
 
         .faq-item-topbar .question::before {
@@ -292,9 +305,10 @@ class TopBar {
       <!-- Home Button (Left) -->
       <div class="top-bar-home-wrapper">
         <button class="top-bar-home-btn" id="btn-inicio" aria-label="Inicio">
-          <svg class="top-bar-home-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+          <svg class="top-bar-home-icon top-bar-nav-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
             <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
           </svg>
+          <span>Inicio</span>
         </button>
       </div>
 
@@ -318,28 +332,26 @@ class TopBar {
           </div>
           <div class="body">
             <div class="faq-item-topbar">
-              <div class="question">¿Cómo accedo a HCM?</div>
-              <div class="answer">HCM es el sistema de Gestión de Capital Humano. Puedes acceder desde el menú principal haciendo click en la tarjeta de HCM. Necesitarás tus credenciales de usuario.</div>
+              <div class="question">1. ¿Cómo consulto mis bonos en HCM?</div>
+              <div class="answer">
+                                  1.- Ingresa a <b>HCM</b>.<br>
+                                  2.- Dirígete al apartado <b>“Yo”</b>.<br>
+                                  3.- Presiona la opción <b>“Mostrar más”</b>.<br>
+                                  4.- Desplázate hacia abajo hasta la sección <b>“Compensación”</b>.<br>
+                                  5.- Da clic en <b>“Mi compensación”</b>.<br>
+                                  6.- Ubica la sección <b>“Compensación adicional”</b>.<br>
+                                  7.- Por último, presiona <b>“Mostrar compensación anterior”</b> para consultar tus bonos.</div>
             </div>
             <div class="faq-item-topbar">
-              <div class="question">¿Cómo uso GCA?</div>
-              <div class="answer">GCA es el Sistema de Gestión de Calidad. Accede desde el menú principal. Aquí puedes consultar procedimientos y formatos autorizados.</div>
-            </div>
-            <div class="faq-item-topbar">
-              <div class="question">¿Cómo regreso al menú principal?</div>
-              <div class="answer">Haz click en el botón circular azul de "Inicio" en el centro de la barra superior. Serás redirigido al menú principal donde puedes elegir otra plataforma.</div>
-            </div>
-            <div class="faq-item-topbar">
-              <div class="question">¿Qué hago si olvido mi contraseña?</div>
-              <div class="answer">Cada plataforma tiene su propio sistema de recuperación de contraseña. Busca el enlace "¿Olvidaste tu contraseña?" en la pantalla de login.</div>
-            </div>
-            <div class="faq-item-topbar">
-              <div class="question">¿Mi sesión se cierra automáticamente?</div>
-              <div class="answer">Sí, por seguridad tu sesión se cierra automáticamente después de 3 minutos de inactividad. Recibirás una advertencia 30 segundos antes.</div>
-            </div>
-            <div class="faq-item-topbar">
-              <div class="question">¿Dónde está el botón de cerrar sesión?</div>
-              <div class="answer">Para cerrar sesión de forma segura, haz click en el botón "Regresar" a la izquierda. Esto te llevará al menú principal donde tu sesión terminará automáticamente.</div>
+              <div class="question">2. ¿Cómo solicito vacaciones o un permiso?</div>
+              <div class="answer">
+                                1.- Ingresa a <b>HCM</b>.<br>
+                                2.- Dirígete al apartado <b>“Yo”</b>.<br>
+                                3.- Selecciona <b>“Tiempo y Ausencias”</b>.<br>
+                                4.- Da clic en <b>“Agregar ausencia”</b>.<br>
+                                5.- Elige el <b>tipo de ausencia </b> que deseas solicitar.<br>
+                                6.- Captura la información correspondiente.<br>
+                                7.- Por último, presiona <b>“Enviar”</b> y confirma que tu líder apruebe tu solicitud <b>antes de la fecha de inicio</b> de la ausencia.</div>
             </div>
           </div>
         </div>
