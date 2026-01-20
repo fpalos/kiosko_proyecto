@@ -129,9 +129,10 @@
       text-align: left;
       align-self: center;
       width: 100%;
-      display: grid;
-      grid-template-columns: 1.5fr 1.5fr;
-      gap: 6px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
     }
 
     .card li {
@@ -148,6 +149,50 @@
 
     .card li img {
       margin-bottom: 4px;
+    }
+
+    /* Normalize list icons and labels inside cards */
+    .card .inline-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      padding: 12px 20px;
+      border-radius: 8px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.1);
+      width: 180px;
+      min-height: 60px;
+    }
+
+    .card .inline-item:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .card .inline-item:active {
+      transform: translateY(0);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .card .inline-item img {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+      margin: 0;
+      filter: none;
+    }
+
+    .card .inline-item span {
+      font-size: 16px;
+      color: inherit;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .card .inline-item img.icon-white {
+      filter: brightness(0) invert(1);
     }
 
     .card li::before {
@@ -173,6 +218,19 @@
 
     .ga {
       background: linear-gradient(135deg, #DBDBDB 0%, #e8e8e8 100%);
+    }
+
+    /* Solid white background for GCA card buttons */
+    .ga .inline-item {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .ga .inline-item:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .ga .inline-item:active {
+      background: rgba(255, 255, 255, 0.4);
     }
 
     footer {
@@ -303,10 +361,6 @@
         <ul>
           <!--
           <li>
-            <img src="./assets/bonos.png" alt="Bonos Logo" style= vertical-align:middle; margin-right:8px;" />
-            Bonos
-          </li>
-          <li>
             <img src="./assets/nomina.png" alt="Nomina Logo" style= vertical-align:middle; margin-right:8px;" />
             Nomina
           <li>
@@ -314,10 +368,18 @@
             Permisos
           </li>
           -->
-            <li style="grid-column: 1 / -1; justify-self: center;">
-            <img src="./assets/luggage.svg" alt="Vacaciones Logo" style="vertical-align:middle; margin-right:8px; filter: brightness(0) invert(1); width:48px; height: 48px;" />
-            <span style="font-size: 16px;">Vacaciones</span>
-            </li>
+          <li class="inline-item">
+            <img src="./assets/luggage.svg" alt="Vacaciones Logo" class="icon-white" />
+            <span>Vacaciones y <br>permisos</br></span>
+          </li>
+
+
+          <li class="inline-item">
+            <img src="./assets/bonos.png" alt="Bonos Logo" />
+            <span>Bonos y <br>compensación</br></span>
+          </li>
+
+
         </ul>
       </a>
 
@@ -325,15 +387,17 @@
         <img src="./assets/GCA-Icono SVG.svg" alt="GCA-Icono" class="card-icon" style="width:128px; height: 128px;" />
         
         
-        <h4 style="color: #002DC7;">Aquí podrás consultar</h4>
+        <h4 style="color: #002DC7;">Aquí podrás consultar y revisar</h4>
         <p></p>
         <ul>
-          <li>
-            <img src="./assets/procedimientos.png" alt="Procedimientos Logo" style=vertical-align:middle; margin-right:8px;" />
-            Procedimientos vigentes</li>
-          <li>
-            <img src="./assets/formatos.png" alt="Formatos Logo" style=vertical-align:middle; margin-right:8px;" />
-            Formatos autorizados </li>
+          <li class="inline-item">
+            <img src="./assets/procedimientos.png" alt="Procedimientos Logo" />
+            <span>Procedimientos <br>vigentes</br></span>
+          </li>
+          <li class="inline-item">
+            <img src="./assets/formatos.png" alt="Formatos Logo" />
+            <span>Formatos <br>autorizados</br></span>
+          </li>
         </ul>
       </a>
     </main>
