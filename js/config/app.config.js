@@ -6,8 +6,8 @@
 const AppConfig = {
   // Configuración de sesión
   SESSION: {
-    TIMEOUT_MINUTES: 1,           // Tiempo total antes de logout
-    WARNING_SECONDS: 30,           // Segundos para mostrar warning
+    TIMEOUT_SECONDS: 30,           // Tiempo total antes de logout (en segundos)
+    WARNING_SECONDS: 10,           // Segundos para mostrar warning
     ACTIVITY_EVENTS: [             // Eventos que resetean el timeout
       'mousedown',
       'keydown',
@@ -96,10 +96,10 @@ const AppConfig = {
 };
 
 // Validación básica
-if (AppConfig.SESSION.TIMEOUT_MINUTES <= 0) {
-  console.error('SESSION.TIMEOUT_MINUTES debe ser mayor a 0');
+if (AppConfig.SESSION.TIMEOUT_SECONDS <= 0) {
+  console.error('SESSION.TIMEOUT_SECONDS debe ser mayor a 0');
 }
 
-if (AppConfig.SESSION.WARNING_SECONDS >= AppConfig.SESSION.TIMEOUT_MINUTES * 60) {
-  console.error('WARNING_SECONDS no puede ser mayor o igual a TIMEOUT_MINUTES');
+if (AppConfig.SESSION.WARNING_SECONDS >= AppConfig.SESSION.TIMEOUT_SECONDS) {
+  console.error('WARNING_SECONDS no puede ser mayor o igual a TIMEOUT_SECONDS');
 }

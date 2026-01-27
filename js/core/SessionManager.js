@@ -6,15 +6,15 @@
 class SessionManager {
   constructor(config = null, eventBus = null) {
     this.config = config || (typeof AppConfig !== 'undefined' ? AppConfig.SESSION : {
-      TIMEOUT_MINUTES: 3,
-      WARNING_SECONDS: 30,
+      TIMEOUT_SECONDS: 40,
+      WARNING_SECONDS: 10,
       ACTIVITY_EVENTS: ['mousedown', 'keydown', 'scroll', 'touchstart', 'click']
     });
     
     this.eventBus = eventBus || (typeof window.eventBus !== 'undefined' ? window.eventBus : null);
     this.navigationService = null; // Se establece después desde content.js
     
-    this.inactivityTime = this.config.TIMEOUT_MINUTES * 60 * 1000;
+    this.inactivityTime = this.config.TIMEOUT_SECONDS * 1000;
     this.warningTime = this.config.WARNING_SECONDS * 1000;
     
     this.inactivityTimer = null;
@@ -23,7 +23,7 @@ class SessionManager {
     this.warningShown = false;
     
     Logger.logSession('SessionManager inicializado', {
-      timeout: this.config.TIMEOUT_MINUTES + ' min',
+      timeout: this.config.TIMEOUT_SECONDS + ' seg',
       warning: this.config.WARNING_SECONDS + ' seg'
     });
   }
@@ -66,7 +66,7 @@ class SessionManager {
     if (this.eventBus) {
       this.eventBus.emit(EVENTS.SESSION_START, {
         timestamp: new Date(),
-        timeout: this.config.TIMEOUT_MINUTES
+        timeout: this.config.TIMEOUT_SECONDS
       });
     }
   }
@@ -458,7 +458,7 @@ class SessionManager {
     Logger.log('Session Time:', this.getSessionTime() + ' seconds');
     Logger.log('Warning Shown:', this.warningShown);
     Logger.log('Config:', {
-      timeout: this.config.TIMEOUT_MINUTES + ' minutes',
+      timeout: this.config.TIMEOUT_SECONDS + ' seconds',
       warning: this.config.WARNING_SECONDS + ' seconds'
     });
   }
