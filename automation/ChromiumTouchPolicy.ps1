@@ -2,6 +2,9 @@
 .SYNOPSIS
     Hardening Maestro para Chromium (Versión Corregida)
     Soluciona errores de "Obligatoria/Error" mediante sintaxis estricta.
+
+    reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\EdgeUI" /v AllowEdgeSwipe /t REG_DWORD /d 0 /f
+
 #>
 
 function Write-Check($text) { Write-Host "[✔] $text" -ForegroundColor Green }
@@ -56,3 +59,4 @@ gpupdate /force | Out-Null
 
 Write-Check "Hardening completado. Los errores de 'Obligatoria' deberían desaparecer."
 Write-Host "TIP: Reinicia Chromium y revisa chrome://policy" -ForegroundColor Magenta
+
