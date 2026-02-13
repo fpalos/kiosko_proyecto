@@ -1,58 +1,58 @@
-﻿<#
+<#
 .SYNOPSIS
-    Hardening de políticas para el motor Chromium Puro.
-    Bloqueo de gestos de navegación, zoom y menús contextuales.
+    Hardening Maestro para Chromium (Versión Corregida)
+    Soluciona errores de "Obligatoria/Error" mediante sintaxis estricta.
 #>
 
-function Write-Check($text) {
-    Write-Host "[✔] $text" -ForegroundColor Green
-}
-
-function Write-Step($text) {
-    Write-Host ">> $text..." -ForegroundColor Cyan
-}
+function Write-Check($text) { Write-Host "[✔] $text" -ForegroundColor Green }
+function Write-Step($text) { Write-Host ">> $text..." -ForegroundColor Cyan }
 
 Clear-Host
-Write-Host "--- APLICANDO POLÍTICAS A CHROMIUM PURO ---" -ForegroundColor Yellow -BackgroundColor Black
+Write-Host "--- APLICANDO POLÍTICAS CORRECTIVAS A CHROMIUM ---" -ForegroundColor Yellow -BackgroundColor Black
 
-# 1. DEFINICIÓN DE LA RUTA DE CHROMIUM
-# A diferencia de Edge, Chromium busca en SOFTWARE\Policies\Chromium
-$chromiumPolicy = "HKLM:\SOFTWARE\Policies\Chromium"
-if (!(Test-Path $chromiumPolicy)) { New-Item $chromiumPolicy -Force | Out-Null }
+# Definimos las rutas probables (Chromium puro suele usar la de Google o Chromium)
+$regPaths = @("HKLM:\SOFTWARE\Policies\Chromium", "HKLM:\SOFTWARE\Policies\Google\Chrome")
 
-# 2. DESACTIVAR GESTOS DE NAVEGACIÓN (BACK/FORWARD SWIPE)
-# Evita que el usuario deslice para navegar en el historial
-Write-Step "Desactivando Overscroll History Navigation"
-Set-ItemProperty -Path $chromiumPolicy -Name "OverscrollHistoryNavigationEnabled" -Value 0 -Type DWord -Force
+foreach ($path in $regPaths) {
+    if (!(Test-Path $path)) { New-Item $path -Force | Out-Null }
+    Write-Step "Configurando ruta: $path"
 
-# 3. CONTROL DE EVENTOS TÁCTILES Y ZOOM
-# Fuerza a Chromium a manejar los toques de forma simple (evita pinch-to-zoom)
-Write-Step "Restringiendo eventos táctiles (Bloqueo de Zoom)"
-Set-ItemProperty -Path $chromiumPolicy -Name "TouchEventsEnabled" -Value 1 -Type DWord -Force
+    # 1. POLÍTICAS BOOLEANAS Y NUMÉRICAS (DWord)
+    # Aquí bloqueamos gestos, zoom, menús y grupos de pestañas
+    $settings = @{
+        "OverscrollHistoryNavigationEnabled" = 0
+        "TouchEventsEnabled"                 = 1
+        "DefaultContextMenuSetting"          = 2
+        "QuickSearchShowMiniMenu"            = 0
+        "TabDiscardingEnabled"               = 0
+        "TabGroupsEnabled"                   = 0
+        "ClearBrowsingDataOnExit"            = 1
+    }
 
-# 4. DESACTIVAR MENÚ CONTEXTUAL (LONG PRESS)
-# Evita que el toque prolongado abra el menú de 'Inspeccionar' o 'Guardar como'
-Write-Step "Desactivando Menú Contextual (Clic derecho táctil)"
-Set-ItemProperty -Path $chromiumPolicy -Name "DefaultContextMenuSetting" -Value 2 -Type DWord -Force
+    foreach ($name in $settings.Keys) {
+        Set-ItemProperty -Path $path -Name $name -Value $settings[$name] -Type DWord -Force
+    }
 
-# 5. BLOQUEO DE POPUPS Y MINI-MENÚS DE SELECCIÓN
-# Evita que aparezcan burbujas de búsqueda de Windows al seleccionar texto
-Write-Step "Desactivando burbujas de búsqueda y mini-menús"
-Set-ItemProperty -Path $chromiumPolicy -Name "QuickSearchShowMiniMenu" -Value 0 -Type DWord -Force
+    # 2. CORRECCIÓN PARA ClearBrowsingDataOnExit
+    # Esto elimina el error porque ahora sí le decimos QUÉ borrar
+    $listPath = "$path\ClearBrowsingDataOnExitList"
+    if (!(Test-Path $listPath)) { New-Item $listPath -Force | Out-Null }
+    
+    $dataTypes = @("browsing_history", "download_history", "cookies_and_other_site_data", "cached_images_and_files")
+    for ($i=0; $i -lt $dataTypes.Count; $i++) {
+        Set-ItemProperty -Path $listPath -Name ($i+1).ToString() -Value $dataTypes[$i] -Force
+    }
 
-# 6. INSTALACIÓN FORZADA DE EXTENSIÓN (Si decides volver a usarla en Chromium)
-# Sustituye TU_ID_AQUI por el ID de tu extensión local
-$extId = "kaebgciankbnfahggmajibggfgekmkem"
-$extPath = "C:/KioskDisplay/kiosko_extension"
-$jsonConfig = '{"' + $extId + '": {"installation_mode": "force_installed", "path": "' + $extPath + '"}}'
+    # 3. EXTENSIÓN FORZADA (Sintaxis String)
+    $extId = "kaebgciankbnfahggmajibggfgekmkem"
+    $extFolder = "C:/KioskDisplay/kiosko_extension"
+    $json = '{"' + $extId + '": {"installation_mode": "force_installed", "path": "' + $extFolder + '"}}'
+    Set-ItemProperty -Path $path -Name "ExtensionSettings" -Value $json -Type String -Force
+}
 
-Write-Step "Configurando carga forzada de extensión local"
-Set-ItemProperty -Path $chromiumPolicy -Name "ExtensionSettings" -Value $jsonConfig -Type String -Force
-
-# 7. REFRESCAR SISTEMA
-Write-Step "Sincronizando políticas de grupo"
+# 4. REFRESCAR SISTEMA
+Write-Step "Sincronizando políticas de grupo (GPUpdate)"
 gpupdate /force | Out-Null
 
-Write-Check "Hardening de Chromium completado exitosamente."
-Write-Host ""
-Write-Host "NOTA: Asegúrate de que tu binario de Chromium esté configurado para leer GPO." -ForegroundColor Gray
+Write-Check "Hardening completado. Los errores de 'Obligatoria' deberían desaparecer."
+Write-Host "TIP: Reinicia Chromium y revisa chrome://policy" -ForegroundColor Magenta
