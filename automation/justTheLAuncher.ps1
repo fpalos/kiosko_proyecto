@@ -70,34 +70,27 @@ function Launch-Kiosko {
     Write-Host ""
 
     # Configurar todos los argumentos de Chrome
-    $arguments = @(
-        "--kiosk",                    # Fuerza pantalla completa real
-        "--force-device-scale-factor=1", # Fuerza zoom al 100%
-        "--no-first-run",            # Evita pantallas de bienvenida
-        "--no-default-browser-check", # Evita preguntar si es el navegador por defecto
-        "--disable-infobars",        # Deshabilita barras de información
-        "--disable-extensions-except=`"$EXTENSION_DIR`"", # Solo cargar nuestra extensión
+    # ARGUMENTOS ACTUALIZADOS (Específicos para matar el Swipe Lateral)
+    $chromeArgs = @(
+        "--kiosk",
+        "--user-data-dir=`"$KIOSK_DATA`"",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--disable-infobars",
+        
+        # --- BLOQUEO DE NAVEGACIÓN LATERAL (SWIPE) ---
+        "--overscroll-history-navigation=0", 
+        "--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation,EdgeSwipe",
+        "--touch-events=enabled",           # Fuerza a Chrome a pasar el toque al HTML, no al navegador
+        # --------------------------------------------
+
+        "--disable-pinch",                  # Bloquea zoom
+        "--disable-extensions-except=`"$EXTENSION_DIR`"",
         "--load-extension=`"$EXTENSION_DIR`"",
-        "--disable-web-security",    # Permite cargar extensiones locales
-        "--disable-features=VizDisplayCompositor,TouchpadOverscrollHistoryNavigation,OverscrollHistoryNavigation", # Evita problemas con extensiones y navegación con gestos
-        "--overscroll-history-navigation=0", # Deshabilita navegación con gestos de overscroll
-        "--allow-running-insecure-content", # Permite contenido inseguro para extensiones locales
-        "--disable-password-manager-reauthentication", # Deshabilita reautenticación de contraseñas
-        "--disable-save-password-bubble", # Deshabilita burbujas de guardar contraseña
-        "--disable-autofill",        # Deshabilita autocompletado
-        "--disable-sync",            # Deshabilita sincronización
-        "--disable-background-mode", # Deshabilita ejecución en segundo plano
-        "--disable-background-timer-throttling", # Deshabilita throttling de timers
-        "--disable-renderer-backgrounding", # Deshabilita backgrounding del renderer
-        "--disable-backgrounding-occluded-windows", # Deshabilita backgrounding de ventanas ocultas
-        "--disable-features=TranslateUI,PasswordManager,AutofillServerCommunication,AutofillDownloadManager", # Deshabilita completamente gestores
-        "--disable-password-generation", # Deshabilita generación de contraseñas
-        "--disable-autofill-keyboard-accessory-view", # Deshabilita vista de accesorios
-        "--disable-single-click-autofill", # Deshabilita autofill con un click
-        "--password-store=basic",    # Usa almacén básico (no funcional)
-        "--disable-login-animations", # Deshabilita animaciones de login
-        "--disable-credential-manager-api", # Deshabilita API de gestor de credenciales
-        "$localHtmlUrl"              # URL a abrir
+        "--disable-web-security",
+        "--allow-running-insecure-content",
+        "--disable-session-crashed-bubble",
+        "`"$localHtmlUrl`""
     )
 
     try {
@@ -144,3 +137,4 @@ else {
 }
 
 Write-Host ""
+
